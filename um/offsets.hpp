@@ -17,6 +17,12 @@
 #define CAMERA_LOCATION 0x170
 #define CAMERA_ROTATION 0x180
 
+// ===== Camera =====
+#define PLAYER_CAMERA_MANAGER 0x360
+#define CAMERA_LOCATION 0x170
+#define CAMERA_ROTATION 0x180
+#define CAMERA_FOV 0x3B4
+
 // ===== Pawn =====
 #define LOCAL_PAWN 0x358
 #define PAWN_PRIVATE 0x328
