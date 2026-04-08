@@ -190,7 +190,7 @@ Vector3 get_entity_bone(uintptr_t mesh, int bone_id)
 {
 	uintptr_t bone_array = driver.read<uintptr_t>(mesh + BONE_ARRAY);
 	if (bone_array == 0) bone_array = driver.read<uintptr_t>(mesh + BONE_ARRAY_CACHE);
-	FTransform bone = driver.read<FTransform>(bone_array + (bone_id * 0x60));
+	FTransform bone = driver.read<FTransform>(bone_array + (bone_id * 0x30)); // Size reduced in newer UE5
 	FTransform component_to_world = driver.read<FTransform>(mesh + COMPONENT_TO_WORLD);
 	D3DMATRIX matrix = matrix_multiplication(bone.to_matrix_with_scale(), component_to_world.to_matrix_with_scale());
 	return Vector3(matrix._41, matrix._42, matrix._43);
