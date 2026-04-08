@@ -156,20 +156,23 @@ namespace cache
 
 Camera get_view_point()
 {
-	Camera view_point{};
-	uintptr_t location_pointer = driver.read<uintptr_t>(cache::uworld + 0x110);
-	uintptr_t rotation_pointer = driver.read<uintptr_t>(cache::uworld + 0x120);
-	FNRot fnrot{};
-	fnrot.a = driver.read<double>(rotation_pointer);
-	fnrot.b = driver.read<double>(rotation_pointer + 0x20);
-	fnrot.c = driver.read<double>(rotation_pointer + 0x1D0);
-	view_point.location = driver.read<Vector3>(location_pointer);
-	view_point.rotation.x = asin(fnrot.c) * (180.0 / M_PI);
-	view_point.rotation.y = ((atan2(fnrot.a * -1, fnrot.b) * (180.0 / M_PI)) * -1) * -1;
-	view_point.fov = driver.read<float>(cache::player_controller + 0x394) * 90.f;
-	return view_point;
+    Camera view_point{};
+    
+    // Updated for v39.30 - Camera location
+    uintptr_t camera_manager = driver.read<uintptr_t>(cache::player_controller + 0x360);
+    if (!camera_manager) return view_point;
+    
+    // Camera location and rotation (updated offsets)
+    view_point.location = driver.read<Vector3>(camera_manager + 0x170);
+    view_point.rotation.x = driver.read<double>(camera_manager + 0x180); // Pitch
+    view_point.rotation.y = driver.read<double>(camera_manager + 0x188); // Yaw
+    
+    // FOV (updated offset)
+    view_point.fov = driver.read<float>(camera_manager + 0x3B4);
+    if (view_point.fov == 0) view_point.fov = 90.0f;
+    
+    return view_point;
 }
-
 Vector2 project_world_to_screen(Vector3 world_location)
 {
 	cache::local_camera = get_view_point();
